@@ -13,13 +13,34 @@ function drawPlayer()
 
 end
 
-enemies = {
-    { x = 100, y = 100 }
-}
+-- How the enemies accelerate downwards
+enemyAcceleration = 5
+
+-- Enemy initial speed
+enemySpeed = 40
+
+-- Table of all enemies
+enemies = {}
+
+math.randomseed(love.timer.getTime())
+
+windowWidth = love.graphics.getWidth()
+
+-- Add random enemies (above the top of the screen, so they're out of view initially)
+for i = 1, 50 do
+    x = math.random(10, windowWidth - 10)
+    y = math.random(i * -100, (i - 1) * -100)
+    enemy = { x = x, y = y }
+    table.insert(enemies, enemy)
+end
+
 -- Draw all of the enemy ships
 function drawEnemies()
     for _, enemy in ipairs(enemies) do
-        love.graphics.polygon("fill", enemy.x, enemy.y, enemy.x - 10, enemy.y - 20, enemy.x + 10, enemy.y - 20)
+        x = enemy.x
+        y = enemy.y
+        --                           bottom    top left        top right
+        love.graphics.polygon("fill", x, y, x - 10, y - 20, x + 10, y - 20)
     end
 end
 
@@ -34,5 +55,9 @@ function updatePlayer()
 end
 
 function updateEnemies()
-
+    -- increase enemy speed
+    enemySpeed = enemySpeed + enemyAcceleration * love.timer.getDelta()
+    for _, enemy in ipairs(enemies) do
+        enemy.y = enemy.y + enemySpeed * love.timer.getDelta()
+    end
 end
